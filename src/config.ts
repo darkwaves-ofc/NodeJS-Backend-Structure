@@ -17,20 +17,16 @@ interface Config {
     callBackUri: string | undefined;
   };
   loadDefaultIps: boolean;
-  cacheToken: string | undefined;
-  geoLocationApiKey: string | undefined;
-  rabbitMQ: string | undefined;
   database: {
     DashboardData: { name: string }[];
   };
 }
 
-function parseBoolean(value: any): boolean {
+function parseBoolean(value: string | undefined): boolean {
   if (typeof value === "string") {
     value = value.trim().toLowerCase();
   }
   switch (value) {
-    case true:
     case "true":
       return true;
     default:
@@ -51,9 +47,6 @@ const config: Config = {
     callBackUri: process.env.CallBackUri,
   },
   loadDefaultIps: parseBoolean(process.env.LoadDefaults),
-  cacheToken: process.env.CacheToken,
-  geoLocationApiKey: process.env.geoLocationAPiKey,
-  rabbitMQ: process.env.RabbitMQURL,
   database: {
     DashboardData: [{ name: "admin" }],
   },
