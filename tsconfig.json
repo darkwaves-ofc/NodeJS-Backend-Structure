@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+      "target": "es2018", // Or a target suitable for your project
+      "module": "commonjs",
+      "strict": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "outDir": "./dist" // Output directory for compiled TypeScript
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "**/*.spec.ts"]
+  }
+  

@@ -1,0 +1,36 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main  # Modify to your branch name
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'  # Modify to your Node.js version
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build TypeScript
+        run: npm run build  # Modify to your build script if necessary
+
+      # Add more steps for testing, linting, etc.
+
+      - name: Release to GitHub
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            # List files to include in the release
+            dist/*.js  # Modify based on your build output
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: Release ${{ github.sha }}
