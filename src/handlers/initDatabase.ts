@@ -9,7 +9,7 @@ export = class DatabaseInitializer {
   private client: any;
 
   constructor(client: any) {
-    if (!client) return new Error(`client is required`);
+    if (!client) throw new Error(`client is required`);
     this.client = client;
   }
 
@@ -397,7 +397,7 @@ export = class DatabaseInitializer {
     ];
 
     for (const schema of schemas) {
-      const id = schema._id.$oid;
+      const id = schema._id;
       let schemaDb = await userData.findOne({ _id: id }).catch(() => {});
       if (schemaDb) continue;
       schemaDb = await new userData(this.convertIdsRecursive(schema)).save();
