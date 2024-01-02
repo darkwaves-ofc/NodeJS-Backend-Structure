@@ -7,7 +7,6 @@ import amqp from "amqplib";
 import jwt from "jsonwebtoken";
 import userDataDb from "../schema/userData";
 import cors from "cors";
-import getUserData from "../utils/getuserData.js";
 import Logger from "../utils/logger";
 // import * as CircularJSON from "circular-json";
 // import * as dayjs from "dayjs";
@@ -23,7 +22,6 @@ class App {
   private mongoose: any;
   private fileCache: Map<string, any>;
   private linkCache: Map<string, any>;
-  private getUserData: any;
   private parseURL: any;
   private jwt: any;
   private ipport: any;
@@ -48,7 +46,6 @@ class App {
     this.mongoose = mongoose;
     this.fileCache = new Map();
     this.linkCache = new Map();
-    this.getUserData = getUserData;
     this.mongoose.Promise = global.Promise;
 
     this.mongoose.connection.on("connected", () => {
