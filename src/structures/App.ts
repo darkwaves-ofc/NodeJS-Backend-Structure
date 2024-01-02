@@ -14,39 +14,38 @@ import Logger from "../utils/logger";
 // import { v4 as uuidv4 } from "uuid";
 // import { CompressionTypes, Partitioners } from "kafkajs";
 
-class App {
+interface App {
+  new (someParam: any): App;
   config: any;
-  private express: any;
-  private routes: Map<string, any>;
-  private logger: any;
-  private mongoose: any;
-  private fileCache: Map<string, any>;
-  private linkCache: Map<string, any>;
-  private parseURL: any;
-  private jwt: any;
-  private ipport: any;
-  private _errorMiddleware: any;
-  private _requirehandlers: any;
-  private port: any;
-  private links: any;
-  private server: any;
-  private use: any;
-  private listen: any;
-  private set: any;
-  private _router: any;
-  private findUser: any;
+  express: any;
+  routes: Map<string, any>;
+  logger: any;
+  mongoose: any;
+  fileCache: Map<string, any>;
+  linkCache: Map<string, any>;
+  parseURL: any;
+  jwt: any;
+  ipport: any;
+  _errorMiddleware: any;
+  _requirehandlers: any;
+  port: any;
+  links: any;
+  server: any;
+  findUser: any;
   connect: any;
+  app: any;
+}
 
+class App {
   constructor() {
-    // super();
     this.config = config;
-    this.express = express;
     this.routes = new Map();
     this.logger = Logger;
     this.mongoose = mongoose;
     this.fileCache = new Map();
     this.linkCache = new Map();
     this.mongoose.Promise = global.Promise;
+    this.app = express();
 
     this.mongoose.connection.on("connected", () => {
       this.logger.log("[DB] DATABASE CONNECTED", "ready");
@@ -82,15 +81,15 @@ class App {
     this._requirehandlers = async function () {
       this.port = this.config.website.port;
       this.links = this.config.website.links;
-      this.server = this.listen(this.port);
-      this.use(
+      this.server = this.app.listen(this.port);
+      this.app.use(
         cors({
           origin: this.config.website.fontendUri,
           methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
           credentials: true,
         })
       );
-      this.use(
+      this.app.use(
         async (
           req: express.Request,
           res: express.Response,
@@ -113,18 +112,18 @@ class App {
             "Access-Control-Allow-Headers",
             "Content-Type, Authorization"
           );
-          res.setHeader("Access-Control-Allow-Private-Network", "true");
+          res.setHeader("Access-Control-Allow--Network", "true");
           next();
         }
       );
 
-      this.use(cookieParser(this.config.website.secretKey));
-      this.use(express.static(`${process.cwd()}/website`));
-      this.use(bodyParser.json({ limit: "1000mb" }));
-      this.set("trust proxy", true);
-      this.set("etag", false);
-      this.set("view engine", "ejs");
-      this.use(this._errorMiddleware);
+      this.app.use(cookieParser(this.config.website.secretKey));
+      this.app.use(express.static(`${process.cwd()}/website`));
+      this.app.use(bodyParser.json({ limit: "1000mb" }));
+      this.app.set("trust proxy", true);
+      this.app.set("etag", false);
+      this.app.set("view engine", "ejs");
+      this.app.use(this._errorMiddleware);
 
       for (const x of [
         "loadroutes",
@@ -136,17 +135,17 @@ class App {
         await new handler(this).start();
       }
 
-      this._router.stack.forEach((layer: any, index: any, layers: any) => {
+      this.app._router.stack.forEach((layer: any, index: any, layers: any) => {
         if (layer.handle === this._errorMiddleware) {
           layers.splice(index, 1);
         }
       });
 
       for (const [id, x] of this.routes) {
-        this.use(`/api/${x.version}`, x);
+        this.app.use(`/api/${x.version}`, x);
       }
 
-      this.use(this._errorMiddleware);
+      this.app.use(this._errorMiddleware);
     };
 
     this.findUser = function (token: string, secret?: string) {
