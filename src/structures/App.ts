@@ -16,7 +16,7 @@ import Logger from "../utils/logger";
 // import { CompressionTypes, Partitioners } from "kafkajs";
 
 class App {
-  private config: any;
+  config: any;
   private express: any;
   private routes: Map<string, any>;
   private logger: any;
@@ -37,7 +37,7 @@ class App {
   private set: any;
   private _router: any;
   private findUser: any;
-  private connect: any;
+  connect: any;
 
   constructor() {
     // super();
@@ -223,4 +223,4 @@ class App {
   }
 }
 
-export = App;
+export default App;

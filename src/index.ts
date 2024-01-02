@@ -1,6 +1,6 @@
 "use strict";
 
-import App from "./src/structures/App";
+import App from "./structures/App";
 import colors from "colors";
 import os from "os";
 import readline from "readline";
@@ -15,7 +15,7 @@ process.on("unhandledRejection", (reason: any, p: any) => {
 
 process.on("uncaughtException", (err: Error, origin: string) => {
   console.log(
-    "\n\n\n\n\n\n=== uncaught Exception ===".toUpperCase().yellow.dim,
+    "\n\n\n\n\n\n=== uncaught Exception ===".toUpperCase().yellow.dim
   );
   console.log("Exception: ", err.stack ? err.stack : err);
   console.log("=== uncaught Exception ===\n\n\n\n\n".toUpperCase().yellow.dim);
@@ -41,7 +41,7 @@ process.on(
   "multipleResolves",
   (type: string, promise: Promise<any>, reason: any) => {
     // Do something for multipleResolves event
-  },
+  }
 );
 
 function getIPv4Addresses(): string | undefined {
@@ -49,9 +49,9 @@ function getIPv4Addresses(): string | undefined {
   let ipv4Address: string | undefined;
 
   Object.keys(networkInterfaces).forEach((interfaceName) => {
-    const interfaceInfo = networkInterfaces[interfaceName];
+    const interfaceInfo: any = networkInterfaces[interfaceName];
 
-    interfaceInfo.forEach((info) => {
+    interfaceInfo.forEach((info:any) => {
       if (info.family === "IPv4" && info.internal === false) {
         ipv4Address = info.address;
       }
@@ -80,8 +80,8 @@ new Promise<void>((resolve) => {
           value === "All"
             ? `${value}`
             : `${value}:${client.config.website.port}`
-        }`,
-      ),
+        }`
+      )
     );
   });
   console.log(colors.yellow.bold(`Or just press enter to go with env ips \n`));
@@ -103,7 +103,7 @@ new Promise<void>((resolve) => {
       }
     }
 
-    const allips = client.config.website.links.map((val) => {
+    const allips = client.config.website.links.map((val:any) => {
       return (val = `${val}:${client.config.website.port}`);
     });
 
