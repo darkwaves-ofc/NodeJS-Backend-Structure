@@ -8,6 +8,8 @@ import jwt from "jsonwebtoken";
 import userDataDb from "../schema/userData";
 import cors from "cors";
 import { LoggerType, logger } from "../utils/logger";
+import EventEmitter from "events";
+import socketIo, { Server as SocketServer, Socket } from "socket.io";
 import { Server } from "http";
 // import * as CircularJSON from "circular-json";
 // import * as dayjs from "dayjs";
@@ -49,10 +51,11 @@ interface App {
   findUser: FindUserFunction;
   connect: () => Promise<void>;
   app: express.Express;
+  wspaths: Map<string, any>;
+  io: SocketServer;
+  wsevents: EventEmitter;
 }
-export interface AppTypes extends App {
-  
-}
+export interface AppTypes extends App {}
 class App {
   constructor() {
     this.config = config;

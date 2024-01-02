@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { AppTypes } from "../structures/App";
 
 interface UserData {
   profilePicture: string;
@@ -17,55 +18,56 @@ interface UserData {
   };
 }
 
-class FilterData {
-  private client: any;
+interface DestrucuredData {
+  profilePicture: string;
+  bio: string;
+  userName: string;
+  id: string;
+  name: string;
+  school: string;
+  owner: boolean;
+  createdAt: dayjs.Dayjs; // Update to correct type Dayjs
+  role: string;
+  editAccessRoles?: {
+    roleIndex: number;
+    roleType: string;
+  }[];
+}
 
-  constructor(client: any) {
+class FilterData {
+  private client: AppTypes;
+
+  constructor(client: AppTypes) {
     this.client = client;
   }
 
-  async user(userType: string, findingUserData: UserData) {
-    const destrucuredData: any = {};
+  user(userType: string, findingUserData: UserData): DestrucuredData {
+    const destrucuredData: DestrucuredData = {
+      profilePicture: findingUserData.profilePicture || "",
+      bio: findingUserData.bio || "",
+      userName: findingUserData.userName || "",
+      id: String(findingUserData._id) || "",
+      name: findingUserData.name || "",
+      school: findingUserData.school || "",
+      owner: findingUserData.owner || false,
+      createdAt: dayjs(findingUserData.createdAt), // Initialize with dayjs
+      role: findingUserData.roles.roleType || "",
+    };
 
-    switch (userType === "@me") {
-      case true: {
-        this.populateDestructuredData(destrucuredData, findingUserData);
-
-        if (findingUserData.roles.roleIndex === "1") {
-          destrucuredData.editAcessRoles = [
-            { roleIndex: 2, roleType: "admin" },
-            { roleIndex: 3, roleType: "staff" },
-          ];
-        } else if (findingUserData.roles.roleIndex === "2") {
-          destrucuredData.editAcessRoles = [
-            { roleIndex: 3, roleType: "staff" },
-          ];
-        } else if (findingUserData.roles.roleIndex === "3") {
-          destrucuredData.editAcessRoles = [];
-        }
-        break;
-      }
-      case false: {
-        this.populateDestructuredData(destrucuredData, findingUserData);
-        break;
+    if (userType === "@me") {
+      if (findingUserData.roles.roleIndex === "1") {
+        destrucuredData.editAccessRoles = [
+          { roleIndex: 2, roleType: "admin" },
+          { roleIndex: 3, roleType: "staff" },
+        ];
+      } else if (findingUserData.roles.roleIndex === "2") {
+        destrucuredData.editAccessRoles = [{ roleIndex: 3, roleType: "staff" }];
+      } else if (findingUserData.roles.roleIndex === "3") {
+        destrucuredData.editAccessRoles = [];
       }
     }
-    return destrucuredData;
-  }
 
-  private populateDestructuredData(
-    destrucuredData: any,
-    findingUserData: UserData
-  ) {
-    destrucuredData.profilePicture = findingUserData.profilePicture || "";
-    destrucuredData.bio = findingUserData.bio || "";
-    destrucuredData.userName = findingUserData.userName || "";
-    destrucuredData.id = String(findingUserData._id) || "";
-    destrucuredData.name = findingUserData.name || "";
-    destrucuredData.school = findingUserData.school || "";
-    destrucuredData.owner = findingUserData.owner || false;
-    destrucuredData.createdAt = dayjs(findingUserData.createdAt) || "";
-    destrucuredData.role = findingUserData.roles.roleType || "";
+    return destrucuredData;
   }
 }
 

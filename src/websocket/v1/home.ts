@@ -5,6 +5,8 @@ import userDataDb from "../../schema/userData";
 import Crypto from "node:crypto";
 import broadcastMessage from "../../schema/broadcastMessage";
 import eventDataSchema from "../../schema/eventData";
+import { AppTypes } from "../../structures/App";
+import { Socket as BaseSocket } from "socket.io";
 
 interface State {
   authenticated: boolean | null;
@@ -12,9 +14,13 @@ interface State {
   token: string | null;
 }
 
+interface Socket extends BaseSocket {
+  sessionId: string; // Define the 'sessionId' property
+}
+
 export default {
   name: "/home",
-  async run(client: any, socket: any, req: any, params: any) {
+  async run(client: AppTypes, socket: Socket, req: any, params: any) {
     const state: State = { authenticated: null, id: null, token: null };
 
     const sendMessage = async function (data: any) {

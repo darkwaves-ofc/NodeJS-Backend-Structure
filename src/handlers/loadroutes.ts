@@ -1,11 +1,7 @@
 "use strict";
 
 import { readdir } from "fs";
-
-interface Client {
-  routes: Map<string, any>;
-  logger: any;
-}
+import { AppTypes } from "../structures/App";
 
 interface Route {
   version: string;
@@ -13,13 +9,16 @@ interface Route {
 
 interface Path {
   name: string;
-  route: any; // Replace 'any' with an appropriate type based on your route structure
+  route: RouteConstructor;
+}
+interface RouteConstructor {
+  new (client: AppTypes): Route; // If Route is a class and takes AppTypes in its constructor
 }
 
 export = class RoutesInitializer {
-  private client: Client;
+  private client: AppTypes;
 
-  constructor(client: Client) {
+  constructor(client: AppTypes) {
     if (!client) throw new Error(`client is required`);
     this.client = client;
   }

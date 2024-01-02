@@ -15,6 +15,19 @@ interface DiskUsage {
   freeStorage: number;
 }
 
+interface SystemSpecs {
+  id: number;
+  type: string;
+  usage: string | number; // Adjust according to actual types for 'usage'
+  data: SystemData[];
+}
+
+interface SystemData {
+  _id: number;
+  title: string;
+  amount: string | number; // Adjust according to actual types for 'amount'
+}
+
 function getPrimaryDiskPath(): string {
   if (os.platform() === "win32") {
     return "C:";
@@ -33,7 +46,7 @@ function formatBytes(bytes: number): string {
   return `${formattedValue} ${sizes[i]}`;
 }
 
-async function getCpuUsage(): Promise<any> {
+async function getCpuUsage(): Promise<si.Systeminformation.CurrentLoadData | null> {
   try {
     const sys = await si.currentLoad();
     return sys;
@@ -72,7 +85,7 @@ function getDiskUsage(path: string): Promise<DiskUsage> {
   });
 }
 
-async function updateSystemSpecs(): Promise<any[]> {
+async function updateSystemSpecs(): Promise<SystemSpecs[]> {
   try {
     const systemUsage = await getSystemUsage();
     const diskUsage = await getDiskUsage(getPrimaryDiskPath());

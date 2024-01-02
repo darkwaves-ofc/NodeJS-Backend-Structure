@@ -4,10 +4,16 @@ import dayjs from "dayjs";
 import userDataDb from "../../schema/userData";
 import Crypto from "node:crypto";
 import broadcastMessage from "../../schema/broadcastMessage";
+import { AppTypes } from "../../structures/App";
+import { Socket as BaseSocket } from "socket.io";
+
+interface Socket extends BaseSocket {
+  sessionId: string; // Define the 'sessionId' property
+}
 
 export default {
   name: "/public",
-  async run(client: any, socket: any, req: any, params: any) {
+  async run(client: AppTypes, socket: Socket, req: any, params: any) {
     const sendMessage = async function (data: any) {
       socket.emit("server-message", data);
     };

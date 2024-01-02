@@ -2,33 +2,20 @@
 
 import { EventEmitter } from "events";
 import { readdir } from "fs";
-import socketIo, { Server, Socket } from "socket.io";
-import { ParsedUrlQuery } from "querystring";
-
-interface Client {
-  server: any;
-  config: any;
-  links: string[];
-  parseURL: (link: string) => any;
-  ipport: (link: string, port: number) => string;
-  port: number;
-  logger: any;
-  wspaths: Map<string, any>;
-  io: Server;
-  wsevents: EventEmitter;
-}
+import socketIo, { Socket } from "socket.io";
+import { AppTypes } from "../structures/App";
 
 interface WebSocketPath {
   default: {
     name: string;
-    run: (client: Client, socket: Socket, request: any) => void;
+    run: (client: AppTypes, socket: Socket, request: Socket) => void;
   };
 }
 
 export = class WebSocketInitializer {
-  private client: Client;
+  private client: AppTypes;
 
-  constructor(client: Client) {
+  constructor(client: AppTypes) {
     if (!client) throw new Error(`client is required`);
     this.client = client;
     this.client.wspaths = new Map();
@@ -49,7 +36,7 @@ export = class WebSocketInitializer {
     });
     this.client.io = io;
 
-    io.use((socket: any, next: any) => {
+    io.use((socket, next) => {
       const { host } = socket.request.headers;
       let checkHost = false;
 
@@ -110,7 +97,7 @@ export = class WebSocketInitializer {
 
     for (const [name, path] of this.client.wspaths) {
       const nameSpace = io.of(name);
-      nameSpace.on("connection", (socket: any) => {
+      nameSpace.on("connection", (socket: Socket) => {
         path.run(this.client, socket, socket.request);
       });
     }

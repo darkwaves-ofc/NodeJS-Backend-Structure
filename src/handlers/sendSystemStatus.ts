@@ -2,12 +2,12 @@
 
 import updateSystemSpecs from "../utils/getSystemSpecs";
 import { readdir } from "fs";
-import { Client } from "./types"; // Replace './types' with the path to your types file
+import { AppTypes } from "../structures/App";
 
 export = class SystemInformation {
-  private client: Client;
+  private client: AppTypes;
 
-  constructor(client: Client) {
+  constructor(client: AppTypes) {
     if (!client) throw new Error(`client is required`);
     this.client = client;
   }

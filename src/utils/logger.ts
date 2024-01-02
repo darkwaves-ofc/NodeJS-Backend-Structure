@@ -11,7 +11,7 @@ type loggerTypes =
   | "ready";
 
 interface LoggerType {
-  log(message?: any, optionalParams?: loggerTypes): void;
+  log(message?: string, optionalParams?: loggerTypes): void;
 }
 export default class Logger {
   log(content: string, type: loggerTypes = "log") {

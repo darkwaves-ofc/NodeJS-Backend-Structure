@@ -7,7 +7,7 @@ import readline from "readline";
 
 const client = new App();
 
-process.on("unhandledRejection", (reason: any, p: any) => {
+process.on("unhandledRejection", (reason, p) => {
   console.log("\n\n\n\n\n=== unhandled Rejection ===".toUpperCase().yellow.dim);
   console.log(reason);
   console.log("=== unhandled Rejection ===\n\n\n\n\n".toUpperCase().yellow.dim);
@@ -37,25 +37,23 @@ process.on("exit", (code: number) => {
   console.log("=== exit ===\n\n\n\n\n".toUpperCase().yellow.dim);
 });
 
-process.on(
-  "multipleResolves",
-  (type: string, promise: Promise<any>, reason: any) => {
-    // Do something for multipleResolves event
-  }
-);
+process.on("multipleResolves", (type, promise, reason) => {
+  // Do something for multipleResolves event
+});
 
 function getIPv4Addresses(): string | undefined {
   const networkInterfaces = os.networkInterfaces();
   let ipv4Address: string | undefined;
 
   Object.keys(networkInterfaces).forEach((interfaceName) => {
-    const interfaceInfo: any = networkInterfaces[interfaceName];
-
-    interfaceInfo.forEach((info: any) => {
-      if (info.family === "IPv4" && info.internal === false) {
-        ipv4Address = info.address;
-      }
-    });
+    const interfaceInfo = networkInterfaces[interfaceName];
+    if (interfaceInfo) {
+      interfaceInfo.forEach((info) => {
+        if (info.family === "IPv4" && info.internal === false) {
+          ipv4Address = info.address;
+        }
+      });
+    }
   });
 
   return ipv4Address;
@@ -103,7 +101,7 @@ new Promise<void>((resolve) => {
       }
     }
 
-    const allips = client.config.website.links.map((val: any) => {
+    const allips = client.config.website.links.map((val) => {
       return (val = `${val}:${client.config.website.port}`);
     });
 

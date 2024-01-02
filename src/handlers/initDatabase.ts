@@ -4,11 +4,39 @@ import { EventEmitter } from "events";
 import { readdir } from "fs";
 import dashboardDataDb from "../schema/dashboard";
 import userData from "../schema/userData";
+import { AppTypes } from "../structures/App";
+
+// interface Schema {
+//   _id: {
+//       $oid: string;
+//   };
+//   type: string;
+//   navigationLinks: ({
+//       title: string;
+//       icon: string;
+//       path: string;
+//       url: string;
+//       _id: {
+//           $oid: string;
+//       };
+//       subMenu: never[];
+//   } | {
+//       title: string;
+//       icon: string;
+//       path: string;
+//       url: string;
+//       _id: {
+//         $oid: string;
+//       };
+//       subMenu?: undefined;
+//   })[];
+//   __v: number;
+// }
 
 export = class DatabaseInitializer {
-  private client: any;
+  private client: AppTypes;
 
-  constructor(client: any) {
+  constructor(client: AppTypes) {
     if (!client) throw new Error(`client is required`);
     this.client = client;
   }
