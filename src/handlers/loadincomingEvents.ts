@@ -37,7 +37,7 @@ export = class WebSocketInitializer {
       0,
     ) as EventEmitter;
 
-    const io = socketIo(this.client.server, {
+    const io = new socketIo.Server(this.client.server, {
       cors: {
         origin: this.client.config.website.fontendUri,
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
