@@ -4,7 +4,7 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-interface Config {
+export interface Config {
   mongourl: string | undefined;
   website: {
     links: string[];
@@ -52,4 +52,4 @@ const config: Config = {
   },
 };
 
-export = config;
+export default config;

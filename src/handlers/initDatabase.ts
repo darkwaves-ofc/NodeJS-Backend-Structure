@@ -275,7 +275,7 @@ export = class DatabaseInitializer {
       let schemaDb = await dashboardDataDb.findOne({ _id: id }).catch(() => {});
       if (schemaDb) continue;
       schemaDb = await new dashboardDataDb(
-        this.convertIdsRecursive(schema),
+        this.convertIdsRecursive(schema)
       ).save();
     }
   }

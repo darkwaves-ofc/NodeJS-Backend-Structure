@@ -1,9 +1,10 @@
 import express, { Request, Response, Router } from "express";
 import userDataDb from "../../../schema/userData";
 import bcrypt from "bcrypt";
+import { AppTypes } from "../../../structures/App";
 
 class Route {
-  constructor(client: any) {
+  constructor(client: AppTypes) {
     const router: Router = express.Router();
 
     router.post("/user/auth", async (req: Request, res: Response) => {
@@ -15,15 +16,15 @@ class Route {
         const { loginData = {} } = req.body;
         const authHeader = req.headers["authorization"];
         const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN_VALUE
+        if (token) {
+          const tokenUserData = await client
+            .findUser(token, req.secret)
+            .catch(() => {});
 
-        const tokenUserData = await client
-          .findUser(token, req.secret)
-          .catch(() => {});
-
-        if (tokenUserData) {
-          return notFoundError(`You are already logged into the system`, 400);
+          if (tokenUserData) {
+            return notFoundError(`You are already logged into the system`, 400);
+          }
         }
-
         const { userName, password } = loginData;
         if (!userName) {
           return notFoundError(`userName is required`, 400);

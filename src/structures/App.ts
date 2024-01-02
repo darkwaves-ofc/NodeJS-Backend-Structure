@@ -1,5 +1,5 @@
 import express from "express";
-import config from "../config";
+import config, { Config } from "../config";
 import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
@@ -7,40 +7,57 @@ import amqp from "amqplib";
 import jwt from "jsonwebtoken";
 import userDataDb from "../schema/userData";
 import cors from "cors";
-import Logger from "../utils/logger";
+import { LoggerType, logger } from "../utils/logger";
+import { Server } from "http";
 // import * as CircularJSON from "circular-json";
 // import * as dayjs from "dayjs";
 // import { EventEmitter } from "ws";
 // import { v4 as uuidv4 } from "uuid";
 // import { CompressionTypes, Partitioners } from "kafkajs";
 
-interface App {
-  new (someParam: any): App;
-  config: any;
-  express: any;
-  routes: Map<string, any>;
-  logger: any;
-  mongoose: any;
-  fileCache: Map<string, any>;
-  linkCache: Map<string, any>;
-  parseURL: any;
-  jwt: any;
-  ipport: any;
-  _errorMiddleware: any;
-  _requirehandlers: any;
-  port: any;
-  links: any;
-  server: any;
-  findUser: any;
-  connect: any;
-  app: any;
+interface UserData {
+  _id: string;
+  tokens: { token: string }[];
+  // Add other properties as per your actual structure
 }
 
+type ErrorMiddlewareFunction = (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => Promise<void>;
+
+interface FindUserFunction {
+  (token: string, secret?: string): Promise<UserData>; // Adjust the return type as per your actual return structure
+}
+
+interface App {
+  config: Config;
+  routes: Map<string, any>;
+  logger: LoggerType;
+  mongoose: mongoose.Mongoose;
+  fileCache: Map<string, any>;
+  linkCache: Map<string, any>;
+  parseURL: (link: string) => URL;
+  jwt: jwt.JwtPayload;
+  ipport: (link: string, port: number) => string;
+  _errorMiddleware: ErrorMiddlewareFunction;
+  _requirehandlers: () => Promise<void>;
+  port: number;
+  links: string[];
+  server: Server;
+  findUser: FindUserFunction;
+  connect: () => Promise<void>;
+  app: express.Express;
+}
+export interface AppTypes extends App {
+  
+}
 class App {
   constructor() {
     this.config = config;
     this.routes = new Map();
-    this.logger = Logger;
+    this.logger = logger;
     this.mongoose = mongoose;
     this.fileCache = new Map();
     this.linkCache = new Map();
@@ -74,12 +91,17 @@ class App {
       req: express.Request,
       res: express.Response,
       next: express.NextFunction
-    ) {
-      return res.status(404).json({ error: true, message: "page not found" });
+    ): Promise<void> {
+      res.status(404).json({ error: true, message: "page not found" });
+      return;
     };
 
     this._requirehandlers = async function () {
-      this.port = this.config.website.port;
+      this.port =
+        parseInt(
+          this.config.website.port ? this.config.website.port : "8080",
+          10
+        ) || 8080;
       this.links = this.config.website.links;
       this.server = this.app.listen(this.port);
       this.app.use(
@@ -204,13 +226,16 @@ class App {
     this.connect = async function () {
       this.logger.log(`[WebSite] Loading !`, "log");
 
-      await this.mongoose.connect(this.config.mongourl, {
-        useNewUrlParser: true,
-        autoIndex: false,
-        connectTimeoutMS: 10000,
-        family: 4,
-        useUnifiedTopology: true,
-      });
+      await this.mongoose.connect(
+        this.config.mongourl ? this.config.mongourl : "",
+        {
+          // useNewUrlParser: true,
+          autoIndex: false,
+          connectTimeoutMS: 10000,
+          family: 4,
+          // useUnifiedTopology: true,
+        }
+      );
 
       await this._requirehandlers();
       this.logger.log(`[WebSite] Website is now Online !`, "ready");

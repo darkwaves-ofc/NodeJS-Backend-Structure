@@ -42,7 +42,7 @@ const dashboardDataSchema: Schema<IDashboardData> = new Schema({
 
 const DashboardDataModel = model<IDashboardData>(
   "DashboardData",
-  dashboardDataSchema,
+  dashboardDataSchema
 );
 
 export default DashboardDataModel;

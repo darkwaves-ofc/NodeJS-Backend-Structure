@@ -51,7 +51,7 @@ function getIPv4Addresses(): string | undefined {
   Object.keys(networkInterfaces).forEach((interfaceName) => {
     const interfaceInfo: any = networkInterfaces[interfaceName];
 
-    interfaceInfo.forEach((info:any) => {
+    interfaceInfo.forEach((info: any) => {
       if (info.family === "IPv4" && info.internal === false) {
         ipv4Address = info.address;
       }
@@ -103,7 +103,7 @@ new Promise<void>((resolve) => {
       }
     }
 
-    const allips = client.config.website.links.map((val:any) => {
+    const allips = client.config.website.links.map((val: any) => {
       return (val = `${val}:${client.config.website.port}`);
     });
 

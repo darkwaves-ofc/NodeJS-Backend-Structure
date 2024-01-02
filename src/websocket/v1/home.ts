@@ -44,12 +44,9 @@ export default {
           socket.removeListener("disconnect", handleClear);
           resolve();
         };
-        setTimeout(
-          () => {
-            handleClear();
-          },
-          1000 * 60 * 2,
-        );
+        setTimeout(() => {
+          handleClear();
+        }, 1000 * 60 * 2);
         socket.on("client-message", handleReceive);
         socket.on("disconnect", handleClear);
       });

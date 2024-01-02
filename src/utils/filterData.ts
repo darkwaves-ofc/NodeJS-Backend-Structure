@@ -55,7 +55,7 @@ class FilterData {
 
   private populateDestructuredData(
     destrucuredData: any,
-    findingUserData: UserData,
+    findingUserData: UserData
   ) {
     destrucuredData.profilePicture = findingUserData.profilePicture || "";
     destrucuredData.bio = findingUserData.bio || "";
