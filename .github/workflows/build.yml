@@ -1,36 +1,109 @@
-name: Build and Release
+name: Commit Workflow
 
 on:
   push:
-    branches:
-      - main  # Modify to your branch name
+    branches: ['main']
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    outputs:
+      tag: ${{ steps.get_version.outputs.tag }}
+      preview: ${{ steps.get_preview.outputs.preview }}
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
-          node-version: '14'  # Modify to your Node.js version
+          node-version: ${{ matrix.node-version }}
 
-      - name: Install dependencies
-        run: npm install
+      - run: npm install
 
-      - name: Build TypeScript
-        run: npm run build  # Modify to your build script if necessary
+      - run: |
+          npm run lint
+          npm run format
 
-      # Add more steps for testing, linting, etc.
+      - name: Build the package
+        run: npm run build
 
-      - name: Release to GitHub
-        uses: softprops/action-gh-release@v1
+      - name: Archive project folder
+        uses: actions/upload-artifact@v2
         with:
-          files: |
-            # List files to include in the release
-            dist/*.js  # Modify based on your build output
-          token: ${{ secrets.GITHUB_TOKEN }}
-          body: Release ${{ github.sha }}
+          name: dist-folder
+          path: ./dist
+
+      - id: get_version
+        run: |
+          version=$(node -p 'require("./package.json").version')
+          echo "::set-output name=tag::$version"
+
+      - id: get_preview
+        run: |
+          preview=$(node -p 'require("./package.json").preview ? "true" : "false"')
+          echo "::set-output name=preview::$preview"
+
+  publish-dev:
+    needs: build
+    runs-on: ubuntu-latest
+
+    if: needs.build.outputs.preview == 'true'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: dist-folder
+          path: dist
+
+      - run: ls
+
+      - name: Publish to NPM (Dev Version)
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          npm publish --tag=dev
+
+  publish-prod:
+    needs: build
+    runs-on: ubuntu-latest
+
+    if: needs.build.outputs.preview != 'true'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: dist-folder
+          path: dist
+
+      - run: ls
+
+      - name: Publish to NPM (Prod Version)
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          npm publish
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ needs.build.outputs.tag }}
+          release_name: Release v${{ needs.build.outputs.tag }}
+          body: |
+            Release v${{ needs.build.outputs.tag }}
+          draft: false
+          prerelease: ${{ needs.build.outputs.preview == 'true' }}
