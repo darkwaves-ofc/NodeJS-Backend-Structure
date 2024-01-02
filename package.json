@@ -1,6 +1,6 @@
 {
   "name": "nodejs-backend-structure",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "NodeJS Backend Structure.",
   "main": "dist/index.js",
   "preview": true,
