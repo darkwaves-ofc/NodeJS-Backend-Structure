@@ -3,7 +3,7 @@
   "version": "1.1.0",
   "description": "NodeJS Backend Structure.",
   "main": "dist/index.js",
-  "preview": false,
+  "preview": true,
   "homepage": "https://github.com/darkwaves-ofc/NodeJS-Backend-Structure",
   "bugs": {
     "url": "https://github.com/darkwaves-ofc/NodeJS-Backend-Structure/issues",

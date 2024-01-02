@@ -1,37 +1,57 @@
-Project Name
+Backend Structure With NodeJS
 ============
-
-Description
------------
 
 This project is a Node.js application structured to assist developers in \[add a brief description of the project's purpose or functionality\].
 
-Usage
------
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
-\[Add instructions or information on how to use or run the Node.js application.\]
 
-License
--------
+## Documentation
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+You can view [Documentation](#) Regarding to this project.
 
-Authors
--------
 
-*   [Vimukthi Indunil](https://github.com/darkwaves-ofc)
-*   [Achira Nimnaka](https://github.com/achiragaming)
+## Installation
 
-Contribution
-------------
+Install with npm
 
-\[Explain how others can contribute to the project if contributions are welcome.\]
+```bash
+  git clone https://github.com/darkwaves-ofc/NodeJS-Backend-Structure
+  cd NodeJS-Backend-Structure
+  npm install
+  npm run dev
+```
+    
+## Environment Variables
 
-Acknowledgments
----------------
+To run this project, you will need to add the following environment variables to your .env file, or you can rename .env.example to .env and replace the values.
 
-\[Add any acknowledgments or credits to resources or individuals that have been helpful in the project.\]
+`MONGO_URI`
 
-* * *
+`Port`
 
-Feel free to enrich the sections by adding detailed usage instructions, guidelines for contributions, acknowledgments, or any other relevant information about your project. Adjust the placeholders like `[add a brief description of the project's purpose or functionality]` with the actual project's details. This README provides a basic structure that you can build upon.
+`Link`
+
+`LoadDefaults`
+
+`fontEndUri`
+
+`SecretKey`
+
+
+## License
+
+[MIT](https://github.com/darkwaves-ofc/NodeJS-Backend-Structure/blob/main/LICENSE)
+
+
+## Support
+
+For support, email darkwavestech@gmail.com or join our [Discord](https://discord.gg/rrZAveRJnR) channel.
+
+
+## Features
+
+- Easy to use
+- Live previews
+- Automatic
+
