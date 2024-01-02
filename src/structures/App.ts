@@ -9,11 +9,6 @@ import userDataDb from "../schema/userData";
 import cors from "cors";
 import getUserData from "../utils/getuserData.js";
 import Logger from "../utils/logger";
-// import * as CircularJSON from "circular-json";
-// import * as dayjs from "dayjs";
-// import { EventEmitter } from "ws";
-// import { v4 as uuidv4 } from "uuid";
-// import { CompressionTypes, Partitioners } from "kafkajs";
 
 class App {
   private config: any;
@@ -40,7 +35,6 @@ class App {
   private connect: any;
 
   constructor() {
-    // super();
     this.config = config;
     this.express = express;
     this.routes = new Map();
