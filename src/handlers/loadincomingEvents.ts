@@ -19,8 +19,10 @@ interface Client {
 }
 
 interface WebSocketPath {
-  name: string;
-  run: (client: Client, socket: Socket, request: any) => void;
+  default: {
+    name: string;
+    run: (client: Client, socket: Socket, request: any) => void;
+  };
 }
 
 export = class WebSocketInitializer {
@@ -34,7 +36,7 @@ export = class WebSocketInitializer {
 
   public async start() {
     this.client.wsevents = new EventEmitter().setMaxListeners(
-      0,
+      0
     ) as EventEmitter;
 
     const io = new socketIo.Server(this.client.server, {
@@ -68,15 +70,25 @@ export = class WebSocketInitializer {
       next();
     });
 
-    let versions = await new Promise<string[]>((resolve) => {
-      readdir("./src/websocket", (err, files) => {
-        resolve(files);
+    let versions: string[] = []; // Ensure versions is initialized as an array
+    try {
+      versions = await new Promise<string[]>((resolve) => {
+        readdir("./dist/websocket", (err, files) => {
+          if (err) {
+            console.error("Error reading directory:", err);
+            resolve([]); // Resolve with an empty array if there's an error
+          } else {
+            resolve(files);
+          }
+        });
       });
-    });
+    } catch (error) {
+      console.error("Error getting versions:", error);
+    }
 
     for (const version of versions) {
       const websocketFiles = await new Promise<string[]>((resolve, reject) => {
-        readdir(`./src/websocket/${version}/`, (err, files) => {
+        readdir(`./dist/websocket/${version}/`, (err, files) => {
           if (err) reject(err);
           resolve(files?.filter((f) => f.endsWith(".js")) || []);
         });
@@ -84,11 +96,9 @@ export = class WebSocketInitializer {
 
       for (const file of websocketFiles) {
         try {
-          const path: WebSocketPath = require(
-            `../websocket/${version}/${file}`,
-          );
-          if (path.name && typeof path.run === "function") {
-            this.client.wspaths.set(`/${version}${path.name}`, path);
+          const path: WebSocketPath = require(`../websocket/${version}/${file}`);
+          if (path.default.name && typeof path.default.run === "function") {
+            this.client.wspaths.set(`/${version}${path.default.name}`, path);
           } else {
             console.log(`Invalid module: ${file}`);
           }

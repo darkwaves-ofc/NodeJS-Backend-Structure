@@ -26,21 +26,21 @@ export = class RoutesInitializer {
 
   public async start() {
     let versions = await new Promise<string[]>((resolve) => {
-      readdir("./src/routes", (err, files) => {
+      readdir("./dist/routes", (err, files) => {
         resolve(files);
       });
     });
 
     for (const version of versions) {
       const dirs = await new Promise<string[]>((resolve) => {
-        readdir(`./src/routes/${version}/`, (err, dirs) => {
+        readdir(`./dist/routes/${version}/`, (err, dirs) => {
           resolve(dirs);
         });
       });
 
       for (const dir of dirs) {
         const webFiles = await new Promise<string[]>((resolve) => {
-          readdir(`./src/routes/${version}/${dir}/`, (err, files) => {
+          readdir(`./dist/routes/${version}/${dir}/`, (err, files) => {
             resolve(files?.filter((f) => f.endsWith(".js")) || []);
           });
         });

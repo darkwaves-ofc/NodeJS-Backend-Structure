@@ -1,14 +1,13 @@
-"use strict";
+import express, { Request, Response, Router } from "express";
+import userDataDb from "../../../schema/userData";
+import bcrypt from "bcrypt";
 
-class route {
-  constructor(client) {
-    const express = require("express");
-    const router = express.Router();
-    const userDataDb = require("../../../schema/userData");
-    const bcrypt = require("bcrypt");
+class Route {
+  constructor(client: any) {
+    const router: Router = express.Router();
 
-    router.post("/user/auth", async (req, res) => {
-      const notFoundError = function (message, code) {
+    router.post("/user/auth", async (req: Request, res: Response) => {
+      const notFoundError = function (message: string, code: number): Response {
         return res.status(code).json({ error: true, message });
       };
 
@@ -34,25 +33,16 @@ class route {
         }
 
         // Find user by userName
-        const userSchema = await userDataDb
-          .findOne({ userName: userName })
-          .catch((err) => {
-            console.log(err);
-          });
+        const userSchema = await userDataDb.findOne({ userName: userName });
         if (!userSchema) {
           return notFoundError(`userName is not found`, 400);
         }
 
-        if (userSchema.deleted) {
-          return notFoundError(`User account is not active`, 400);
-        }
         // Verify the password
         const isPasswordValid = await bcrypt.compare(
           password,
-          userSchema.password,
+          userSchema.password
         );
-
-        // const isPasswordValid = (password ===  userSchema.password)
 
         if (!isPasswordValid) {
           return notFoundError(`userName or password is invalid`, 400);
@@ -62,7 +52,7 @@ class route {
           {
             uuid: userSchema._id.toString(),
           },
-          client.config.website.secretKey,
+          client.config.website.secretKey
         );
 
         userSchema.tokens.push({
@@ -84,4 +74,4 @@ class route {
   }
 }
 
-module.exports = { route: route, name: "user-post" };
+export = { route: Route, name: "user-post" };

@@ -140,7 +140,6 @@ class App {
           layers.splice(index, 1);
         }
       });
-
       for (const [id, x] of this.routes) {
         this.app.use(`/api/${x.version}`, x);
       }
