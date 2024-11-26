@@ -46,7 +46,7 @@ To run this project, you will need to add the following environment variables to
 
 ## Support
 
-For support, email darkwavestech@gmail.com or join our [Discord](https://discord.gg/rrZAveRJnR) channel.
+For support, email darkwavestech@gmail.com or join our [Discord](https://discord.gg/wt3r4Z3u9S) channel.
 
 
 ## Features
